@@ -13,10 +13,7 @@ import fr.imie.editors.CustomerEditor;
 import fr.imie.entity.Customer;
 import fr.imie.entity.Order;
 import fr.imie.repository.CustomerRepository;
-import fr.imie.views.CustomerView;
-import fr.imie.views.DefaultView;
-import fr.imie.views.UIScopedView;
-import fr.imie.views.ViewScopedView;
+import fr.imie.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -66,6 +63,8 @@ public class VaadinUI extends UI {
                 DefaultView.VIEW_NAME));
         navigationBar.addComponent(createNavigationButton("Customers",
                 CustomerView.VIEW_NAME));
+        navigationBar.addComponent(createNavigationButton("Products",
+                ProductView.VIEW_NAME));
         root.addComponent(navigationBar);
 
         final Panel viewContainer = new Panel();

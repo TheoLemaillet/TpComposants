@@ -10,8 +10,8 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import fr.imie.entity.Customer;
-import fr.imie.repository.CustomerRepository;
+import fr.imie.entity.Product;
+import fr.imie.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -19,22 +19,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @SpringComponent
 @UIScope
-public class CustomerEditor extends VerticalLayout {
-
-    private final CustomerRepository repository;
+public class ProductEditor extends VerticalLayout {
+    private final ProductRepository repository;
 
     /**
-     * The currently edited customer
+     * The currently edited product
      */
-    private Customer customer;
+    private Product product;
 
     /* Fields to edit properties in Customer entity */
     private TextField name = new TextField("Name");
-    private TextField address = new TextField("Address");
-    private TextField postalCode = new TextField("Postal Code");
-    private TextField city = new TextField("City");
-    private TextField email = new TextField("Email");
-    private TextField telephone = new TextField("Telephone");
+    private TextField description = new TextField("Address");
+    private TextField price = new TextField("Postal Code");
 
     /* Action buttons */
     private Button save = new Button("Save", FontAwesome.SAVE);
@@ -43,10 +39,10 @@ public class CustomerEditor extends VerticalLayout {
     private CssLayout actions = new CssLayout(save, cancel, delete);
 
     @Autowired
-    public CustomerEditor(CustomerRepository repository) {
+    public ProductEditor(ProductRepository repository) {
         this.repository = repository;
 
-        addComponents(name, address, postalCode, city, email, telephone, actions);
+        addComponents(name, description, price, actions);
 
         // Configure and style components
         setSpacing(true);
@@ -55,9 +51,9 @@ public class CustomerEditor extends VerticalLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // wire action buttons to save, delete and reset
-        save.addClickListener(e -> repository.save(customer));
-        delete.addClickListener(e -> repository.delete(customer));
-        cancel.addClickListener(e -> editCustomer(customer));
+        save.addClickListener(e -> repository.save(product));
+        delete.addClickListener(e -> repository.delete(product));
+        cancel.addClickListener(e -> editProduct(product));
         setVisible(false);
     }
 
@@ -66,21 +62,21 @@ public class CustomerEditor extends VerticalLayout {
         void onChange();
     }
 
-    public final void editCustomer(Customer c) {
+    public final void editProduct(Product c) {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            customer = repository.findOne(c.getId());
+            product = repository.findOne(c.getId());
         }
         else {
-            customer = c;
+            product = c;
         }
         cancel.setVisible(persisted);
 
         // Bind customer properties to similarly named fields
         // Could also use annotation or "manual binding" or programmatically
         // moving values from fields to entities before saving
-        BeanFieldGroup.bindFieldsUnbuffered(customer, this);
+        BeanFieldGroup.bindFieldsUnbuffered(product, this);
 
         setVisible(true);
 
@@ -90,7 +86,7 @@ public class CustomerEditor extends VerticalLayout {
         name.selectAll();
     }
 
-    public void setChangeHandler(ChangeHandler h) {
+    public void setChangeHandler(ProductEditor.ChangeHandler h) {
         // ChangeHandler is notified when either save or delete
         // is clicked
         save.addClickListener(e -> h.onChange());

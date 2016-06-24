@@ -32,6 +32,10 @@ public class OrderDetail {
         this.order = order;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public Float getQte() {
         return qte;
     }

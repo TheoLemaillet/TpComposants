@@ -34,6 +34,10 @@ public class Invoice {
         this.deliveries = deliveries;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getRef() {
         return ref;
     }

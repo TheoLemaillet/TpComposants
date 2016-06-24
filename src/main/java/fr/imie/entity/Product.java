@@ -43,6 +43,10 @@ public class Product {
         this.orderDetails = orderDetails;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

@@ -42,6 +42,10 @@ public class Order {
         this.customer = customer;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getRef() {
         return ref;
     }

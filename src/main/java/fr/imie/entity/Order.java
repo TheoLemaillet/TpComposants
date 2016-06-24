@@ -16,7 +16,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ref", nullable = false)
+    @Column(name = "ref")
     private String ref;
 
     @Column(name = "dateCreated", nullable = false)
@@ -33,9 +33,8 @@ public class Order {
 
     public Order() {}
 
-    public Order(String ref, Date dateCreated, List<OrderDetail> orderDetails,
+    public Order(Date dateCreated, List<OrderDetail> orderDetails,
                  List<Delivery> deliveries, Customer customer) {
-        this.ref = ref;
         this.dateCreated = dateCreated;
         this.orderDetails = orderDetails;
         this.deliveries = deliveries;
@@ -46,8 +45,9 @@ public class Order {
         return id;
     }
 
-    public String getRef() {
-        return ref;
+    @PostPersist
+    public void initRef() {
+        this.ref = "Order_" + id.toString();
     }
 
     public void setRef(String ref) {

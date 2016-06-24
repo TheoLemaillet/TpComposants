@@ -17,7 +17,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ref", nullable = false)
+    @Column(name = "ref")
     private String ref;
 
     @Column(name = "dateInvoice", nullable = false)
@@ -28,8 +28,7 @@ public class Invoice {
 
     public Invoice() {}
 
-    public Invoice(String ref, Date dateInvoice, List<Delivery> deliveries) {
-        this.ref = ref;
+    public Invoice(Date dateInvoice, List<Delivery> deliveries) {
         this.dateInvoice = dateInvoice;
         this.deliveries = deliveries;
     }
@@ -38,8 +37,9 @@ public class Invoice {
         return id;
     }
 
-    public String getRef() {
-        return ref;
+    @PostPersist
+    public void initRef() {
+        this.ref = "Invoice_" + id.toString();
     }
 
     public void setRef(String ref) {

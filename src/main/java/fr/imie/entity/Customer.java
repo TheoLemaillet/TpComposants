@@ -16,7 +16,7 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ref", nullable = false)
+    @Column(name = "ref")
     private String ref;
 
     @Column(name = "name", nullable = false)
@@ -42,9 +42,8 @@ public class Customer {
 
     public Customer() {}
 
-    public Customer(String ref, String name, String address, String postalCode,
+    public Customer(String name, String address, String postalCode,
                     String city, String email, List<Order> orders, String telephone) {
-        this.ref = ref;
         this.name = name;
         this.address = address;
         this.postalCode = postalCode;
@@ -54,9 +53,8 @@ public class Customer {
         this.telephone = telephone;
     }
 
-    public Customer(String ref, String name, String address, String postalCode,
+    public Customer(String name, String address, String postalCode,
                     String city, String email, List<Order> orders) {
-        this.ref = ref;
         this.name = name;
         this.address = address;
         this.postalCode = postalCode;
@@ -71,6 +69,11 @@ public class Customer {
 
     public String getRef() {
         return ref;
+    }
+
+    @PostPersist
+    public void initRef() {
+        this.ref = "Customer_" + id.toString();
     }
 
     public void setRef(String ref) {

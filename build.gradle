@@ -6,23 +6,32 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
 	}
+}
+
+plugins {
+	id "io.spring.dependency-management" version "0.5.7.RELEASE"
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'spring-boot' 
+apply plugin: 'spring-boot'
+
 
 jar {
 	baseName = 'tpcomponent'
 	version = '0.0.1-SNAPSHOT'
 }
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven { url "http://oss.sonatype.org/content/repositories/vaadin-snapshots/" }
+//	maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
 
 
@@ -31,7 +40,10 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-ws')
-	compile('org.hibernate:hibernate-core:5.2.0.Final')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.hibernate:hibernate-core:5.1.0.Final')
+	compile('org.hibernate:hibernate-entitymanager:5.1.0.Final')
+	compile("com.vaadin:vaadin-spring-boot-starter:1.0.0")
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test') 
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')

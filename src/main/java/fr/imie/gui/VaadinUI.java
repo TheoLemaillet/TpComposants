@@ -2,16 +2,19 @@ package fr.imie.gui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import fr.imie.editors.CustomerEditor;
 import fr.imie.entity.Customer;
+import fr.imie.entity.Order;
 import fr.imie.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by tlemaillet on 6/23/16.
@@ -21,24 +24,74 @@ import org.springframework.util.StringUtils;
 @Theme("valo")
 public class VaadinUI extends UI {
 
-    private CustomerRepository repo;
-    private Grid grid;
+    private final CustomerRepository repo;
+
+    private final CustomerEditor editor;
+
+    private final Grid grid;
+
+    private final TextField filter;
+
+    private final Button addNewBtn;
 
     @Autowired
-    public VaadinUI(CustomerRepository repo) {
+    public VaadinUI(CustomerRepository repo, CustomerEditor editor) {
         this.repo = repo;
+        this.editor = editor;
         this.grid = new Grid();
+        this.filter = new TextField();
+        this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
     }
 
     @Override
     protected void init(VaadinRequest request) {
-        TextField filter = new TextField();
-        filter.setInputPrompt("Filter by name");
-        filter.addTextChangeListener(e -> listCustomers(e.getText()));
-        VerticalLayout mainLayout = new VerticalLayout(filter, grid);
+        // build layout
+        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
+        VerticalLayout mainLayout = new VerticalLayout(actions, grid, editor);
         setContent(mainLayout);
+
+        // Configure layouts and components
+        actions.setSpacing(true);
+        mainLayout.setMargin(true);
+        mainLayout.setSpacing(true);
+
+        grid.setHeight(300, Unit.PIXELS);
+        //grid.setColumns("id", "firstName", "lastName");
+
+        filter.setInputPrompt("Filter by Name");
+
+        // Hook logic to components
+
+        // Replace listing with filtered content when user changes filter
+        filter.addTextChangeListener(e -> listCustomers(e.getText()));
+
+        // Connect selected Customer to editor or hide if none is selected
+        grid.addSelectionListener(e -> {
+            if (e.getSelected().isEmpty()) {
+                editor.setVisible(false);
+            }
+            else {
+                editor.editCustomer((Customer) grid.getSelectedRow());
+            }
+        });
+
+        // Instantiate and edit new Customer the new button is clicked
+        addNewBtn.addClickListener(e -> editor.editCustomer(
+                new Customer("Mister Bean", "33 rue des potirons", "23065",
+                        "Rennes", "mbean@gmail.com", null, "0123456789")
+        ));
+
+        // Listen changes made by the editor, refresh data from backend
+        editor.setChangeHandler(() -> {
+            editor.setVisible(false);
+            listCustomers(filter.getValue());
+        });
+
+        // Initialize listing
+        listCustomers(null);
     }
 
+    // tag::listCustomers[]
     private void listCustomers(String text) {
         if (StringUtils.isEmpty(text)) {
             grid.setContainerDataSource(
@@ -49,4 +102,5 @@ public class VaadinUI extends UI {
                     repo.findByNameStartsWithIgnoreCase(text)));
         }
     }
+    // end::listCustomers[]
 }

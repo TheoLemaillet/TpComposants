@@ -25,8 +25,10 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product")
     private List<OrderDetail> orderDetails;
+
+    public Product() {}
 
     public Product(String name, String description, Float price, List<OrderDetail> orderDetails) {
         this.name = name;

@@ -23,8 +23,10 @@ public class Invoice {
     @Column(name = "dateInvoice", nullable = false)
     private Date dateInvoice;
 
-    @OneToMany
+    @OneToMany(mappedBy = "invoice")
     private List<Delivery> deliveries;
+
+    public Invoice() {}
 
     public Invoice(String ref, Date dateInvoice, List<Delivery> deliveries) {
         this.ref = ref;

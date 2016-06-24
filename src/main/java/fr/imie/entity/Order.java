@@ -8,7 +8,7 @@ import java.util.List;
  * Created by tlemaillet on 6/23/16.
  */
 @Entity
-@Table(name = "order_mais_cetait_reserve")
+@Table(name = "order_res")
 public class Order {
 
     @Id
@@ -22,14 +22,16 @@ public class Order {
     @Column(name = "dateCreated", nullable = false)
     private Date dateCreated;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<Delivery> deliveries;
 
     @ManyToOne
     private Customer customer;
+
+    public Order() {}
 
     public Order(String ref, Date dateCreated, List<OrderDetail> orderDetails,
                  List<Delivery> deliveries, Customer customer) {

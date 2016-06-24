@@ -28,6 +28,8 @@ public class Delivery {
     @ManyToOne
     private Invoice invoice;
 
+    public Delivery() {}
+
     public Delivery(String ref, Date deliveryDate, Order order, Invoice invoice) {
         this.ref = ref;
         this.deliveryDate = deliveryDate;

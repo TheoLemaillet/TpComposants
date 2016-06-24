@@ -37,8 +37,10 @@ public class Customer {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
     private List<Order> orders;
+
+    public Customer() {}
 
     public Customer(String ref, String name, String address, String postalCode,
                     String city, String email, List<Order> orders, String telephone) {

@@ -24,6 +24,8 @@ public class OrderDetail {
     @ManyToOne
     private Order order;
 
+    public OrderDetail() {}
+
     public OrderDetail(Float qte, Product product, Order order) {
         this.qte = qte;
         this.product = product;

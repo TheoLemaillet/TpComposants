@@ -2,14 +2,21 @@ package fr.imie.gui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import fr.imie.editors.CustomerEditor;
 import fr.imie.entity.Customer;
 import fr.imie.entity.Order;
 import fr.imie.repository.CustomerRepository;
+import fr.imie.views.CustomerView;
+import fr.imie.views.DefaultView;
+import fr.imie.views.UIScopedView;
+import fr.imie.views.ViewScopedView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -25,14 +32,15 @@ import java.util.List;
 public class VaadinUI extends UI {
 
     private final CustomerRepository repo;
-
     private final CustomerEditor editor;
-
     private final Grid grid;
-
     private final TextField filter;
-
     private final Button addNewBtn;
+
+    // we can use either constructor autowiring or field autowiring
+    @Autowired
+    private SpringViewProvider viewProvider;
+
 
     @Autowired
     public VaadinUI(CustomerRepository repo, CustomerEditor editor) {
@@ -45,62 +53,37 @@ public class VaadinUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        // build layout
-        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
-        VerticalLayout mainLayout = new VerticalLayout(actions, grid, editor);
-        setContent(mainLayout);
 
-        // Configure layouts and components
-        actions.setSpacing(true);
-        mainLayout.setMargin(true);
-        mainLayout.setSpacing(true);
+        final VerticalLayout root = new VerticalLayout();
+        root.setSizeFull();
+        root.setMargin(true);
+        root.setSpacing(true);
+        setContent(root);
 
-        grid.setHeight(300, Unit.PIXELS);
-        //grid.setColumns("id", "firstName", "lastName");
+        final CssLayout navigationBar = new CssLayout();
+        navigationBar.addStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
+        navigationBar.addComponent(createNavigationButton("Home",
+                DefaultView.VIEW_NAME));
+        navigationBar.addComponent(createNavigationButton("Customers",
+                CustomerView.VIEW_NAME));
+        root.addComponent(navigationBar);
 
-        filter.setInputPrompt("Filter by Name");
+        final Panel viewContainer = new Panel();
+        viewContainer.setSizeFull();
+        root.addComponent(viewContainer);
+        root.setExpandRatio(viewContainer, 1.0f);
 
-        // Hook logic to components
-
-        // Replace listing with filtered content when user changes filter
-        filter.addTextChangeListener(e -> listCustomers(e.getText()));
-
-        // Connect selected Customer to editor or hide if none is selected
-        grid.addSelectionListener(e -> {
-            if (e.getSelected().isEmpty()) {
-                editor.setVisible(false);
-            }
-            else {
-                editor.editCustomer((Customer) grid.getSelectedRow());
-            }
-        });
-
-        // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editCustomer(
-                new Customer("Mister Bean", "33 rue des potirons", "23065",
-                        "Rennes", "mbean@gmail.com", null, "0123456789")
-        ));
-
-        // Listen changes made by the editor, refresh data from backend
-        editor.setChangeHandler(() -> {
-            editor.setVisible(false);
-            listCustomers(filter.getValue());
-        });
-
-        // Initialize listing
-        listCustomers(null);
+        Navigator navigator = new Navigator(this, viewContainer);
+        navigator.addProvider(viewProvider);
     }
 
-    // tag::listCustomers[]
-    private void listCustomers(String text) {
-        if (StringUtils.isEmpty(text)) {
-            grid.setContainerDataSource(
-                    new BeanItemContainer(Customer.class, repo.findAll()));
-        }
-        else {
-            grid.setContainerDataSource(new BeanItemContainer(Customer.class,
-                    repo.findByNameStartsWithIgnoreCase(text)));
-        }
+    private Button createNavigationButton(String caption, final String viewName) {
+        Button button = new Button(caption);
+        button.addStyleName(ValoTheme.BUTTON_SMALL);
+        // If you didn't choose Java 8 when creating the project, convert this to an anonymous listener class
+        button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
+        return button;
     }
-    // end::listCustomers[]
+
+
 }

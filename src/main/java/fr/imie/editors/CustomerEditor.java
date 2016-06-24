@@ -30,7 +30,11 @@ public class CustomerEditor extends VerticalLayout {
 
     /* Fields to edit properties in Customer entity */
     private TextField name = new TextField("Name");
-    private TextField address = new TextField("address");
+    private TextField address = new TextField("Address");
+    private TextField postalCode = new TextField("Postal Code");
+    private TextField city = new TextField("City");
+    private TextField email = new TextField("Email");
+    private TextField telephone = new TextField("Telephone");
 
     /* Action buttons */
     private Button save = new Button("Save", FontAwesome.SAVE);
@@ -42,7 +46,7 @@ public class CustomerEditor extends VerticalLayout {
     public CustomerEditor(CustomerRepository repository) {
         this.repository = repository;
 
-        addComponents(name, address, actions);
+        addComponents(name, address, postalCode, city, email, telephone, actions);
 
         // Configure and style components
         setSpacing(true);

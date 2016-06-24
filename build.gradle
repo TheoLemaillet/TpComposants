@@ -18,10 +18,15 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
+apply plugin: 'war'
 
+war {
+    baseName = 'tp_component'
+    version =  '0.1.0'
+}
 
 jar {
-	baseName = 'tpcomponent'
+	baseName = 'tp_component'
 	version = '0.0.1-SNAPSHOT'
 }
 
@@ -29,11 +34,16 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+	jcenter()
 	mavenCentral()
 	maven { url "http://oss.sonatype.org/content/repositories/vaadin-snapshots/" }
 //	maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
 
+
+configurations {
+	providedRuntime
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
@@ -47,6 +57,7 @@ dependencies {
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test') 
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 

@@ -5,10 +5,12 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
-import fr.imie.editors.CustomerEditor;
-import fr.imie.entity.Customer;
-import fr.imie.repository.CustomerRepository;
+import fr.imie.editors.ProductEditor;
+import fr.imie.entity.Product;
+import fr.imie.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -17,22 +19,24 @@ import javax.annotation.PostConstruct;
 /**
  * Created by tlemaillet on 6/24/16.
  */
-public class ProductView extends VerticalLayout implements View{
-    public static final String VIEW_NAME = "customer";
+@UIScope
+@SpringView(name = ProductView.VIEW_NAME)
+public class ProductView extends VerticalLayout implements View {
+    public static final String VIEW_NAME = "product";
 
-    private final CustomerRepository repo;
-    private final CustomerEditor editor;
+    private final ProductRepository repo;
+    private final ProductEditor editor;
     private final Grid grid;
     private final TextField filter;
     private final Button addNewBtn;
 
     @Autowired
-    public ProductView(CustomerRepository repo, CustomerEditor editor) {
+    public ProductView(ProductRepository repo, ProductEditor editor) {
         this.repo = repo;
         this.editor = editor;
         this.grid = new Grid();
         this.filter = new TextField();
-        this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
+        this.addNewBtn = new Button("New product", FontAwesome.PLUS);
     }
 
     @PostConstruct
@@ -59,7 +63,7 @@ public class ProductView extends VerticalLayout implements View{
         // Hook logic to components
 
         // Replace listing with filtered content when user changes filter
-        filter.addTextChangeListener(e -> listCustomers(e.getText()));
+        filter.addTextChangeListener(e -> listProduct(e.getText()));
 
         // Connect selected Customer to editor or hide if none is selected
         grid.addSelectionListener(e -> {
@@ -67,42 +71,41 @@ public class ProductView extends VerticalLayout implements View{
                 editor.setVisible(false);
             }
             else {
-                editor.editCustomer((Customer) grid.getSelectedRow());
+                editor.editProduct((Product) grid.getSelectedRow());
             }
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editCustomer(
-                new Customer("Mister Bean", "33 rue des potirons", "23065",
-                        "Rennes", "mbean@gmail.com", null, "0123456789")
+        addNewBtn.addClickListener(e -> editor.editProduct(
+                new Product("Buzz l'eclair", "Vers l'infini et au dela", 45.6f, null)
         ));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            listCustomers(filter.getValue());
+            listProduct(filter.getValue());
         });
 
         // Initialize listing
-        listCustomers(null);
+        listProduct(null);
 
         setMargin(true);
         setSpacing(true);
         addComponent(mainLayout);
     }
 
-    // tag::listCustomers[]
-    private void listCustomers(String text) {
+    // tag::listProducts[]
+    private void listProduct(String text) {
         if (StringUtils.isEmpty(text)) {
             grid.setContainerDataSource(
-                    new BeanItemContainer(Customer.class, repo.findAll()));
+                    new BeanItemContainer(Product.class, repo.findAll()));
         }
         else {
-            grid.setContainerDataSource(new BeanItemContainer(Customer.class,
+            grid.setContainerDataSource(new BeanItemContainer(Product.class,
                     repo.findByNameStartsWithIgnoreCase(text)));
         }
     }
-    // end::listCustomers[]
+    // end::listProducts[]
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

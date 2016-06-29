@@ -25,7 +25,7 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     private List<OrderDetail> orderDetails;
 
     public Product() {}

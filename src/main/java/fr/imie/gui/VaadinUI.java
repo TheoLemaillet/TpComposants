@@ -15,10 +15,6 @@ import fr.imie.entity.Order;
 import fr.imie.repository.CustomerRepository;
 import fr.imie.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by tlemaillet on 6/23/16.

@@ -29,8 +29,8 @@ public class ProductEditor extends VerticalLayout {
 
     /* Fields to edit properties in Customer entity */
     private TextField name = new TextField("Name");
-    private TextField description = new TextField("Address");
-    private TextField price = new TextField("Postal Code");
+    private TextField description = new TextField("Description");
+    private TextField price = new TextField("Price");
 
     /* Action buttons */
     private Button save = new Button("Save", FontAwesome.SAVE);

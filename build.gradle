@@ -41,9 +41,9 @@ repositories {
 }
 
 
-configurations {
-	providedRuntime
-}
+//configurations {
+//	providedRuntime
+//}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
@@ -57,7 +57,7 @@ dependencies {
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test') 
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+	//providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 

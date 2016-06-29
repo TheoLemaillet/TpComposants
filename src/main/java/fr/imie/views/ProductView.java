@@ -7,6 +7,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
 import fr.imie.editors.ProductEditor;
 import fr.imie.entity.Product;
@@ -19,7 +20,7 @@ import javax.annotation.PostConstruct;
 /**
  * Created by tlemaillet on 6/24/16.
  */
-@UIScope
+@ViewScope
 @SpringView(name = ProductView.VIEW_NAME)
 public class ProductView extends VerticalLayout implements View {
     public static final String VIEW_NAME = "product";

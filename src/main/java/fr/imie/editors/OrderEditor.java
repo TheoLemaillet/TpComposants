@@ -5,36 +5,31 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import fr.imie.entity.Customer;
+import fr.imie.entity.Order;
 import fr.imie.repository.CustomerRepository;
+import fr.imie.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by tlemaillet on 6/24/16.
+ * Created by tlemaillet on 6/29/16.
  */
 @SpringComponent
 @UIScope
-public class CustomerEditor extends VerticalLayout {
-
+public class OrderEditor extends VerticalLayout {
+    private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
 
     /**
-     * The currently edited customer
+     * The currently edited order
      */
-    private Customer customer;
+    private Order order;
 
-    /* Fields to edit properties in Customer entity */
-    private TextField name = new TextField("Name");
-    private TextField address = new TextField("Address");
-    private TextField postalCode = new TextField("Postal Code");
-    private TextField city = new TextField("City");
-    private TextField email = new TextField("Email");
-    private TextField telephone = new TextField("Telephone");
+    /* Fields to edit properties in Order entity */
+    private ComboBox customers;
+
 
     /* Action buttons */
     private Button save = new Button("Save", FontAwesome.SAVE);
@@ -43,10 +38,15 @@ public class CustomerEditor extends VerticalLayout {
     private CssLayout actions = new CssLayout(save, cancel, delete);
 
     @Autowired
-    public CustomerEditor(CustomerRepository repository) {
-        this.customerRepository = repository;
+    public OrderEditor(OrderRepository repository, CustomerRepository customerRepository) {
+        this.orderRepository = repository;
+        this.customerRepository = customerRepository;
 
-        addComponents(name, address, postalCode, city, email, telephone, actions);
+        this.customers = new ComboBox("Customer", this.customerRepository.findAll());
+        customers.setNullSelectionAllowed(false);
+        customers.setImmediate(true);
+
+        addComponents(customers, actions);
 
         // Configure and style components
         setSpacing(true);
@@ -55,9 +55,13 @@ public class CustomerEditor extends VerticalLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // wire action buttons to save, delete and reset
-        save.addClickListener(e -> customerRepository.save(customer));
-        delete.addClickListener(e -> customerRepository.delete(customer));
-        cancel.addClickListener(e -> editCustomer(customer));
+        save.addClickListener(e -> {
+
+            order.setCustomer((Customer) customers.getValue());
+            orderRepository.save(order);
+        });
+        delete.addClickListener(e -> orderRepository.delete(order));
+        cancel.addClickListener(e -> editOrder(order));
         setVisible(false);
     }
 
@@ -66,31 +70,29 @@ public class CustomerEditor extends VerticalLayout {
         void onChange();
     }
 
-    public final void editCustomer(Customer c) {
+    public final void editOrder(Order c) {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            customer = customerRepository.findOne(c.getId());
+            order = orderRepository.findOne(c.getId());
         }
         else {
-            customer = c;
+            order = c;
         }
         cancel.setVisible(persisted);
 
         // Bind customer properties to similarly named fields
         // Could also use annotation or "manual binding" or programmatically
         // moving values from fields to entities before saving
-        BeanFieldGroup.bindFieldsUnbuffered(customer, this);
+        BeanFieldGroup.bindFieldsUnbuffered(order, this);
 
         setVisible(true);
 
         // A hack to ensure the whole form is visible
         save.focus();
-        // Select all text in firstName field automatically
-        name.selectAll();
     }
 
-    public void setChangeHandler(ChangeHandler h) {
+    public void setChangeHandler(OrderEditor.ChangeHandler h) {
         // ChangeHandler is notified when either save or delete
         // is clicked
         save.addClickListener(e -> h.onChange());

@@ -78,4 +78,9 @@ public class Product {
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

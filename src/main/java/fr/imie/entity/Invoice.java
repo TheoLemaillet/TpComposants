@@ -61,4 +61,9 @@ public class Invoice {
     public void setDeliveries(List<Delivery> deliveries) {
         this.deliveries = deliveries;
     }
+
+    @Override
+    public String toString() {
+        return this.ref;
+    }
 }

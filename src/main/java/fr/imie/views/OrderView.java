@@ -2,41 +2,42 @@ package fr.imie.views;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Sizeable;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
-import fr.imie.editors.CustomerEditor;
-import fr.imie.entity.Customer;
-import fr.imie.repository.CustomerRepository;
+import fr.imie.editors.OrderEditor;
+import fr.imie.entity.Order;
+import fr.imie.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 
 /**
- * Created by tlemaillet on 6/24/16.
+ * Created by tlemaillet on 6/29/16.
  */
 @ViewScope
-@SpringView(name = CustomerView.VIEW_NAME)
-public class CustomerView extends VerticalLayout implements View {
-    public static final String VIEW_NAME = "customer";
+@SpringView(name = OrderView.VIEW_NAME)
+public class OrderView extends VerticalLayout implements View {
+    public static final String VIEW_NAME = "order";
 
-    private final CustomerRepository repo;
-    private final CustomerEditor editor;
+    private final OrderRepository repo;
+    private final OrderEditor editor;
     private final Grid grid;
     private final TextField filter;
     private final Button addNewBtn;
 
     @Autowired
-    public CustomerView(CustomerRepository repo, CustomerEditor editor) {
+    public OrderView(OrderRepository repo, OrderEditor editor) {
         this.repo = repo;
         this.editor = editor;
         this.grid = new Grid();
         this.filter = new TextField();
-        this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
+        this.addNewBtn = new Button("New order", FontAwesome.PLUS);
     }
 
     @PostConstruct
@@ -51,8 +52,8 @@ public class CustomerView extends VerticalLayout implements View {
         mainLayout.setSpacing(true);
 
 
-        grid.setHeight(300, Unit.PIXELS);
-        grid.setWidth(100, Unit.PERCENTAGE);
+        grid.setHeight(300, Sizeable.Unit.PIXELS);
+        grid.setWidth(100, Sizeable.Unit.PERCENTAGE);
         //grid.setWidthUndefined();
         //grid.setColumns("id", "firstName", "lastName");
         //grid.setFrozenColumnCount(4);
@@ -63,7 +64,7 @@ public class CustomerView extends VerticalLayout implements View {
         // Hook logic to components
 
         // Replace listing with filtered content when user changes filter
-        filter.addTextChangeListener(e -> listCustomers(e.getText()));
+        filter.addTextChangeListener(e -> listOrder(e.getText()));
 
         // Connect selected Customer to editor or hide if none is selected
         grid.addSelectionListener(e -> {
@@ -71,45 +72,42 @@ public class CustomerView extends VerticalLayout implements View {
                 editor.setVisible(false);
             }
             else {
-                editor.editCustomer((Customer) grid.getSelectedRow());
+                editor.editOrder((Order) grid.getSelectedRow());
             }
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editCustomer(
-                new Customer("Mister Bean", "33 rue des potirons", "23065",
-                        "Rennes", "mbean@gmail.com", null, "0123456789")
-        ));
+        addNewBtn.addClickListener(e -> editor.editOrder(new Order(new Date(), null, null, null)));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            listCustomers(filter.getValue());
+            listOrder(filter.getValue());
         });
 
         // Initialize listing
-        listCustomers(null);
+        listOrder(null);
 
         setMargin(true);
         setSpacing(true);
         addComponent(mainLayout);
     }
 
-    // tag::listCustomers[]
-    private void listCustomers(String text) {
+    // tag::listOrders[]
+    private void listOrder(String text) {
         if (StringUtils.isEmpty(text)) {
             grid.setContainerDataSource(
-                    new BeanItemContainer(Customer.class, repo.findAll()));
+                    new BeanItemContainer(Order.class, repo.findAll()));
         }
         else {
-            grid.setContainerDataSource(new BeanItemContainer(Customer.class,
-                    repo.findByNameStartsWithIgnoreCase(text)));
+            grid.setContainerDataSource(new BeanItemContainer(Order.class,
+                    repo.findByRef(text)));
         }
     }
-    // end::listCustomers[]
+    // end::listOrders[]
 
     @Override
-    public void enter(ViewChangeEvent event) {
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
         // the view is constructed in the init() method()
     }
 }

@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringComponent
 @UIScope
 public class ProductEditor extends VerticalLayout {
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
 
     /**
      * The currently edited product
@@ -40,7 +40,7 @@ public class ProductEditor extends VerticalLayout {
 
     @Autowired
     public ProductEditor(ProductRepository repository) {
-        this.repository = repository;
+        this.productRepository = repository;
 
         addComponents(name, description, price, actions);
 
@@ -51,8 +51,8 @@ public class ProductEditor extends VerticalLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // wire action buttons to save, delete and reset
-        save.addClickListener(e -> repository.save(product));
-        delete.addClickListener(e -> repository.delete(product));
+        save.addClickListener(e -> productRepository.save(product));
+        delete.addClickListener(e -> productRepository.delete(product));
         cancel.addClickListener(e -> editProduct(product));
         setVisible(false);
     }
@@ -66,7 +66,7 @@ public class ProductEditor extends VerticalLayout {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            product = repository.findOne(c.getId());
+            product = productRepository.findOne(c.getId());
         }
         else {
             product = c;

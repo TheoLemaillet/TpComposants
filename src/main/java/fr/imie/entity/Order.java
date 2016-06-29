@@ -22,10 +22,10 @@ public class Order {
     @Column(name = "dateCreated", nullable = false)
     private Date dateCreated;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
     private List<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
     private List<Delivery> deliveries;
 
     @ManyToOne
@@ -84,5 +84,10 @@ public class Order {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    @Override
+    public String toString() {
+        return this.ref;
     }
 }

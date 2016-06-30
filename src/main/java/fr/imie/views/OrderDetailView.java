@@ -1,12 +1,16 @@
 package fr.imie.views;
 
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
+import fr.imie.editors.OrderDetailEditor;
+import fr.imie.entity.OrderDetail;
+import fr.imie.repository.OrderDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -18,17 +22,17 @@ import java.util.Date;
  */
 @ViewScope
 @SpringView(name = OrderDetailView.VIEW_NAME)
-public class OrderDetailView {
-    public static final String VIEW_NAME = "order";
+public class OrderDetailView extends VerticalLayout implements View {
+    public static final String VIEW_NAME = "orderdetail";
 
-    private final OrderRepository repo;
-    private final OrderEditor editor;
+    private final OrderDetailRepository repo;
+    private final OrderDetailEditor editor;
     private final Grid grid;
     private final TextField filter;
     private final Button addNewBtn;
 
     @Autowired
-    public OrderDetailView(OrderRepository repo, OrderEditor editor) {
+    public OrderDetailView(OrderDetailRepository repo, OrderDetailEditor editor) {
         this.repo = repo;
         this.editor = editor;
         this.grid = new Grid();
@@ -55,12 +59,12 @@ public class OrderDetailView {
         //grid.setFrozenColumnCount(4);
 
 
-        filter.setInputPrompt("Filter by Name");
+        filter.setInputPrompt("Filter by Ref");
 
         // Hook logic to components
 
         // Replace listing with filtered content when user changes filter
-        filter.addTextChangeListener(e -> listOrder(e.getText()));
+        filter.addTextChangeListener(e -> listOrderDetail(e.getText()));
 
         // Connect selected Customer to editor or hide if none is selected
         grid.addSelectionListener(e -> {
@@ -68,21 +72,21 @@ public class OrderDetailView {
                 editor.setVisible(false);
             }
             else {
-                editor.editOrder((Order) grid.getSelectedRow());
+                editor.editOrderDetail((OrderDetail) grid.getSelectedRow());
             }
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editOrder(new Order(new Date(), null, null, null)));
+        addNewBtn.addClickListener(e -> editor.editOrderDetail(new OrderDetail(0, null, null)));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            listOrder(filter.getValue());
+            listOrderDetail(filter.getValue());
         });
 
         // Initialize listing
-        listOrder(null);
+        listOrderDetail(null);
 
         setMargin(true);
         setSpacing(true);
@@ -90,13 +94,13 @@ public class OrderDetailView {
     }
 
     // tag::listOrders[]
-    private void listOrder(String text) {
+    private void listOrderDetail(String text) {
         if (StringUtils.isEmpty(text)) {
             grid.setContainerDataSource(
-                    new BeanItemContainer(Order.class, repo.findAll()));
+                    new BeanItemContainer(OrderDetail.class, repo.findAll()));
         }
         else {
-            grid.setContainerDataSource(new BeanItemContainer(Order.class,
+            grid.setContainerDataSource(new BeanItemContainer(OrderDetail.class,
                     repo.findByRef(text)));
         }
     }

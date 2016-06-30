@@ -16,7 +16,7 @@ public class OrderDetail {
     private Integer id;
 
     @Column(name = "qte", nullable = false)
-    private Float qte;
+    private Integer qte;
 
     @ManyToOne
     private Product product;
@@ -26,7 +26,7 @@ public class OrderDetail {
 
     public OrderDetail() {}
 
-    public OrderDetail(Float qte, Product product, Order order) {
+    public OrderDetail(Integer qte, Product product, Order order) {
         this.qte = qte;
         this.product = product;
         this.order = order;
@@ -36,11 +36,11 @@ public class OrderDetail {
         return id;
     }
 
-    public Float getQte() {
+    public Integer getQte() {
         return qte;
     }
 
-    public void setQte(Float qte) {
+    public void setQte(Integer qte) {
         this.qte = qte;
     }
 

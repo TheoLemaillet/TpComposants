@@ -62,6 +62,8 @@ public class VaadinUI extends UI {
                 CustomerView.VIEW_NAME));
         navigationBar.addComponent(createNavigationButton("Products",
                 ProductView.VIEW_NAME));
+        navigationBar.addComponent(createNavigationButton("Invoices",
+                InvoiceView.VIEW_NAME));
         navigationBar.addComponent(createNavigationButton("Orders",
                 OrderView.VIEW_NAME));
         navigationBar.addComponent(createNavigationButton("Orders Details",

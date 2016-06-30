@@ -23,7 +23,7 @@ public class Invoice {
     @Column(name = "dateInvoice", nullable = false)
     private Date dateInvoice;
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "invoice")
     private List<Delivery> deliveries;
 
     public Invoice() {}

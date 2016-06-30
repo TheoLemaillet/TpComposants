@@ -101,7 +101,7 @@ public class OrderDetailView extends VerticalLayout implements View {
         }
         else {
             grid.setContainerDataSource(new BeanItemContainer(OrderDetail.class,
-                    repo.findByRef(text)));
+                    repo.findAll()));
         }
     }
     // end::listOrders[]

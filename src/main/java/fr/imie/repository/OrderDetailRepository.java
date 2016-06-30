@@ -10,5 +10,4 @@ import java.util.List;
  */
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
     OrderDetail findById(Integer id);
-    List<OrderDetail> findByRef(String ref);
 }

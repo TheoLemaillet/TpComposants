@@ -88,6 +88,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return this.ref;
+        return this.ref + "_" +this.customer;
     }
 }

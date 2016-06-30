@@ -27,7 +27,7 @@ public class OrderDetailEditor extends VerticalLayout {
     private final ProductRepository productRepository;
 
     /**
-     * The currently edited order
+     * The currently edited orderDetail
      */
     private OrderDetail orderDetail;
 
@@ -49,11 +49,11 @@ public class OrderDetailEditor extends VerticalLayout {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
 
-        this.orders = new ComboBox("Orders", this.orderRepository.findAll());
+        this.orders = new ComboBox("Order", this.orderRepository.findAll());
         orders.setNullSelectionAllowed(false);
         orders.setImmediate(true);
 
-        this.products = new ComboBox("Products", this.productRepository.findAll());
+        this.products = new ComboBox("Product", this.productRepository.findAll());
         products.setNullSelectionAllowed(false);
         products.setImmediate(true);
 
@@ -103,7 +103,7 @@ public class OrderDetailEditor extends VerticalLayout {
         save.focus();
     }
 
-    public void setChangeHandler(OrderEditor.ChangeHandler h) {
+    public void setChangeHandler(OrderDetailEditor.ChangeHandler h) {
         // ChangeHandler is notified when either save or delete
         // is clicked
         save.addClickListener(e -> h.onChange());

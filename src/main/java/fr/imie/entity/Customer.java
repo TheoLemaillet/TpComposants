@@ -1,5 +1,7 @@
 package fr.imie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class Customer {
     private String email;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    @JsonIgnore
     private List<Order> orders;
 
     public Customer() {}

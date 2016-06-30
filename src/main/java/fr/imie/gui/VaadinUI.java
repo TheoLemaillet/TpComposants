@@ -68,6 +68,8 @@ public class VaadinUI extends UI {
                 OrderView.VIEW_NAME));
         navigationBar.addComponent(createNavigationButton("Orders Details",
                 OrderDetailView.VIEW_NAME));
+        navigationBar.addComponent(createNavigationButton("Deliveries",
+                DeliveryView.VIEW_NAME));
         root.addComponent(navigationBar);
 
         final Panel viewContainer = new Panel();

@@ -8,9 +8,9 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.*;
-import fr.imie.editors.OrderDetailEditor;
-import fr.imie.entity.OrderDetail;
-import fr.imie.repository.OrderDetailRepository;
+import fr.imie.editors.DeliveryEditor;
+import fr.imie.entity.Delivery;
+import fr.imie.repository.DeliveryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -21,23 +21,23 @@ import java.util.Date;
  * Created by tlemaillet on 6/30/16.
  */
 @ViewScope
-@SpringView(name = OrderDetailView.VIEW_NAME)
-public class OrderDetailView extends VerticalLayout implements View {
-    public static final String VIEW_NAME = "orderdetail";
+@SpringView(name = DeliveryView.VIEW_NAME)
+public class DeliveryView extends VerticalLayout implements View {
+    public static final String VIEW_NAME = "delivery";
 
-    private final OrderDetailRepository repo;
-    private final OrderDetailEditor editor;
+    private final DeliveryRepository repo;
+    private final DeliveryEditor editor;
     private final Grid grid;
     private final TextField filter;
     private final Button addNewBtn;
 
     @Autowired
-    public OrderDetailView(OrderDetailRepository repo, OrderDetailEditor editor) {
+    public DeliveryView(DeliveryRepository repo, DeliveryEditor editor) {
         this.repo = repo;
         this.editor = editor;
         this.grid = new Grid();
         this.filter = new TextField();
-        this.addNewBtn = new Button("New order detail", FontAwesome.PLUS);
+        this.addNewBtn = new Button("New Delivery", FontAwesome.PLUS);
     }
 
     @PostConstruct
@@ -64,7 +64,7 @@ public class OrderDetailView extends VerticalLayout implements View {
         // Hook logic to components
 
         // Replace listing with filtered content when user changes filter
-        filter.addTextChangeListener(e -> listOrderDetail(e.getText()));
+        filter.addTextChangeListener(e -> listDelivery(e.getText()));
 
         // Connect selected Customer to editor or hide if none is selected
         grid.addSelectionListener(e -> {
@@ -72,21 +72,21 @@ public class OrderDetailView extends VerticalLayout implements View {
                 editor.setVisible(false);
             }
             else {
-                editor.editOrderDetail((OrderDetail) grid.getSelectedRow());
+                editor.editDelivery((Delivery) grid.getSelectedRow());
             }
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editOrderDetail(new OrderDetail(0, null, null)));
+        addNewBtn.addClickListener(e -> editor.editDelivery(new Delivery(new Date(), null, null)));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            listOrderDetail(filter.getValue());
+            listDelivery(filter.getValue());
         });
 
         // Initialize listing
-        listOrderDetail(null);
+        listDelivery(null);
 
         setMargin(true);
         setSpacing(true);
@@ -94,13 +94,13 @@ public class OrderDetailView extends VerticalLayout implements View {
     }
 
     // tag::listOrders[]
-    private void listOrderDetail(String text) {
+    private void listDelivery(String text) {
         if (StringUtils.isEmpty(text)) {
             grid.setContainerDataSource(
-                    new BeanItemContainer(OrderDetail.class, repo.findAll()));
+                    new BeanItemContainer(Delivery.class, repo.findAll()));
         }
         else {
-            grid.setContainerDataSource(new BeanItemContainer(OrderDetail.class,
+            grid.setContainerDataSource(new BeanItemContainer(Delivery.class,
                     repo.findAll()));
         }
     }

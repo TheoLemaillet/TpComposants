@@ -72,4 +72,9 @@ public class Delivery {
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
     }
+
+    @Override
+    public String toString() {
+        return this.ref;
+    }
 }

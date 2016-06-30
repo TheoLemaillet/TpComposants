@@ -17,7 +17,7 @@ public class OrderRest {
     @Autowired
     private OrderRepository orderRepository;
 
-    @RequestMapping(path = "/get/orders", produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(path = "/get", produces = {"application/json"}, method = RequestMethod.GET)
     @ResponseBody
     public List<Order> getOrders() {
         return orderRepository.findAll();
@@ -25,7 +25,20 @@ public class OrderRest {
 
     @RequestMapping(path = "/get/{id}", produces = {"application/json"}, method = RequestMethod.GET)
     @ResponseBody
-    public Order getOrdersById(@PathVariable int id) {
+    public Order getOrderById(@PathVariable int id) {
         return orderRepository.findById(id);
+    }
+
+    @RequestMapping(path = "/create", method = RequestMethod.POST)
+    @ResponseBody
+    public Order createOrder(@RequestBody Order order) {
+        orderRepository.save(order);
+        return order;
+    }
+
+    @RequestMapping(path = "/delete/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public void deleteOrder(@PathVariable int id) {
+        orderRepository.delete(id);
     }
 }
